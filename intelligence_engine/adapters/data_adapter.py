@@ -106,7 +106,7 @@ def normalize_subscription(raw: Any) -> SubscriptionRecord:
     if qty <= 0:
         qty = 1.0
 
-    tot = normalize_amount(get_field(raw, "total_amount", "amount", "subscription_value", "value"))
+    tot = normalize_amount(get_field(raw, "total_amount", "amount", "recurring_amount", "subscription_value", "value"))
     if tot == 0.0 and unit_price > 0.0:
         tot = unit_price * qty
 
@@ -192,7 +192,7 @@ def normalize_invoice(raw: Any) -> InvoiceRecord:
 
     status = str(get_field(raw, "status", "state", default="CONFIRMED")).strip().upper()
     tot = normalize_amount(get_field(raw, "total_amount", "amount", "total", default=0.0))
-    paid = normalize_amount(get_field(raw, "paid_amount", "paid", default=0.0))
+    paid = normalize_amount(get_field(raw, "paid_amount", "paid", "amount_paid", default=0.0))
 
     outstanding = get_field(raw, "outstanding_amount", "balance", "due_amount")
     if outstanding is not None:
@@ -201,7 +201,11 @@ def normalize_invoice(raw: Any) -> InvoiceRecord:
         out_amt = max(0.0, tot - paid)
 
     # Status auto-refinement if unpaid and past due or fully paid
-    if paid >= tot and tot > 0:
+    if status == "PAID":
+        out_amt = 0.0
+        if paid == 0.0 and tot > 0:
+            paid = tot
+    elif paid >= tot and tot > 0:
         status = "PAID"
         out_amt = 0.0
 

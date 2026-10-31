@@ -211,3 +211,70 @@ class IntelligenceReport(BaseModel):
     model_config = ConfigDict(extra="ignore")
     summary: RevenueSummary
     actions: List[ActionItem]
+
+
+class ChurnLevel(str, Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class PlanType(str, Enum):
+    PAYMENT_RECOVERY = "PAYMENT_RECOVERY"
+    DUNNING_NOTICE = "DUNNING_NOTICE"
+    RENEWAL_RESCUE = "RENEWAL_RESCUE"
+    RETENTION_OUTREACH = "RETENTION_OUTREACH"
+    MANUAL_REVIEW = "MANUAL_REVIEW"
+    MONITOR = "MONITOR"
+
+
+class SignalType(str, Enum):
+    OVERDUE_INVOICE = "OVERDUE_INVOICE"
+    PAYMENT_DELAY_PATTERN = "PAYMENT_DELAY_PATTERN"
+    PAYMENT_FAILURE = "PAYMENT_FAILURE"
+    EXPIRING_SUBSCRIPTION = "EXPIRING_SUBSCRIPTION"
+    HIGH_VALUE_EXPOSURE = "HIGH_VALUE_EXPOSURE"
+    UNBILLED_LEAKAGE = "UNBILLED_LEAKAGE"
+    HEALTHY_ACTIVITY = "HEALTHY_ACTIVITY"
+
+
+class RiskSignal(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    type: str
+    severity: str  # "CRITICAL", "HIGH", "MEDIUM", "LOW"
+    description: str
+    detected_at: Optional[str] = None
+    metric_value: Optional[float] = None
+
+
+class FinancialImpact(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    potential_revenue_impact: float = 0.0
+    projected_recovery: float = 0.0
+    projected_revenue_protected: float = 0.0
+    currency: str = "INR"
+
+
+class MitigationPlan(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    plan_type: PlanType
+    recommended_action: str
+    reason: str
+    priority: PriorityLevel
+    confidence: float = Field(ge=0.0, le=1.0, default=0.85)
+    execution_preview: Dict[str, Any] = Field(default_factory=dict)
+
+
+class AgenticActionReport(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    action_id: str
+    generated_at: str
+    customer_id: Optional[str] = None
+    customer_name: str
+    risk: Dict[str, Any]
+    churn: Dict[str, Any]
+    signals: List[RiskSignal]
+    financial_impact: FinancialImpact
+    mitigation_plan: MitigationPlan
+    requires_human_approval: bool = True
