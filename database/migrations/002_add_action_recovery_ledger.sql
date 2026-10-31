@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS action_records (
     )),
     
     -- Entity references
-    customer_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
     customer_name VARCHAR(255),
     invoice_id INTEGER REFERENCES invoices(id) ON DELETE SET NULL,
     subscription_id INTEGER REFERENCES subscriptions(id) ON DELETE SET NULL,

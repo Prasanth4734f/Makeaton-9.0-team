@@ -9,6 +9,8 @@
 PRAGMA foreign_keys = ON;
 
 -- Clean existing demo data in reverse dependency order
+DELETE FROM recovery_execution_logs;
+DELETE FROM action_records;
 DELETE FROM payments;
 DELETE FROM invoice_items;
 DELETE FROM invoices;
@@ -244,3 +246,30 @@ INSERT INTO payments (id, payment_reference, invoice_id, customer_id, payment_da
 (9, 'PAY-2026-009', 10, 8, date('now', '-40 days'), 'BANK_TRANSFER', 20000.00, 'INR', 'COMPLETED', 'TXN_FINEDG_PART1', 'First installment for Q1 subscription', date('now', '-40 days'), date('now', '-40 days')),
 (10, 'PAY-2026-010', 10, 8, date('now', '-20 days'), 'BANK_TRANSFER', 20000.00, 'INR', 'COMPLETED', 'TXN_FINEDG_PART2', 'Second installment for Q1 subscription', date('now', '-20 days'), date('now', '-20 days'));
 
+
+
+-- ----------------------------------------------------------------------------
+-- 11. ACTION_RECORDS (Persistent Intelligence Action Center Items)
+-- ----------------------------------------------------------------------------
+INSERT INTO action_records (id, action_id, action_type, title, description, priority, risk_score, status, customer_id, customer_name, invoice_id, subscription_id, related_entity_type, related_entity_id, recommended_action, potential_revenue_impact, created_at, updated_at, resolved_at, resolved_by, resolution_notes, snoozed_until, snoozed_at, snoozed_by, snooze_reason) VALUES
+-- 1. Scenario A: BrightTech overdue invoice INV-1042
+(1, 'ACT-001', 'PAYMENT_RISK', 'High-value payment overdue: INV-1042', 'Invoice INV-1042 overdue for 12 days with outstanding balance ₹48,000. Dunning triggered.', 'CRITICAL', 94, 'OPEN', 2, 'BrightTech', 3, 2, 'invoice', 'INV-1042', 'Send Smart Payment Reminder & Dunning Sequence', 48000.00, date('now', '-12 days'), date('now', '-12 days'), NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- 2. Scenario B: TechNova upcoming annual renewal
+(2, 'ACT-002', 'RENEWAL_RISK', 'Annual Enterprise Renewal in 5 Days: TechNova', 'High-value enterprise contract (₹1,20,000/yr) expiring in 5 days. Auto-renew pre-confirmation required.', 'HIGH', 72, 'OPEN', 1, 'TechNova', 1, 1, 'subscription', 'SUB-2026-001', 'Issue Advance Renewal Notice with 10% Multi-Year Discount', 120000.00, date('now', '-5 days'), date('now', '-5 days'), NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- 3. Scenario C: Apex Digital missing billing invoice
+(3, 'ACT-003', 'BILLING_RISK', 'Missing billing invoice for active subscription SUB-2026-004', 'Next billing date passed 2 days ago without invoice generation. Automated billing cycle stalled.', 'HIGH', 80, 'OPEN', 4, 'Apex Digital', NULL, 4, 'subscription', 'SUB-2026-004', 'Trigger Automated Invoice Generation & Sync Billing Cycle', 15000.00, date('now', '-2 days'), date('now', '-2 days'), NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+
+-- 4. FinEdge Capital: Partial payment follow-up (SNOOZED until +3 days)
+(4, 'ACT-004', 'PAYMENT_RISK', 'Partial payment reminder: INV-1007 balance ₹35,000', 'Second milestone payment received. Client requested 3-day grace period for remainder.', 'MEDIUM', 58, 'SNOOZED', 8, 'FinEdge Capital', 10, 8, 'invoice', 'INV-1007', 'Follow up on remaining milestone payment', 35000.00, date('now', '-10 days'), date('now', '-1 days'), NULL, NULL, NULL, date('now', '+3 days'), date('now', '-1 days'), 1, 'Client requested 3-day extension until Friday board review'),
+
+-- 5. Quantum Leap AI: Successfully mitigated annual renewal (RESOLVED)
+(5, 'ACT-005', 'RENEWAL_RISK', 'Quantum Leap AI Annual Renewal Continuity', 'Early renewal offer dispatched and accepted by customer procurement.', 'HIGH', 65, 'RESOLVED', 6, 'Quantum Leap AI', 9, 6, 'subscription', 'SUB-2026-006', 'Generate Renewal Rescue Offer & Executive Retention Touchpoint', 120000.00, date('now', '-20 days'), date('now', '-15 days'), date('now', '-15 days'), 1, 'Renewal offer accepted; RTGS transfer cleared in full', NULL, NULL, NULL, NULL);
+
+-- ----------------------------------------------------------------------------
+-- 12. RECOVERY_EXECUTION_LOGS (Historical Mitigation Actions & Outcomes)
+-- ----------------------------------------------------------------------------
+INSERT INTO recovery_execution_logs (id, execution_id, action_id, plan_type, execution_status, executed_by, executed_at, financial_amount, projected_recovery, actual_recovered_amount, channel, notes, signals, created_at) VALUES
+(1, 'EXEC-2026-001', 5, 'RENEWAL_RESCUE_OFFER', 'SUCCESS', 1, date('now', '-16 days'), 120000.00, 120000.00, 120000.00, 'OMNICHANNEL', 'Executive renewal touchpoint and quote approved; customer cleared full annual payment', '["Approaching subscription renewal", "High LTV account"]', date('now', '-16 days')),
+(2, 'EXEC-2026-002', 4, 'DUNNING_NOTICE', 'SUCCESS', 1, date('now', '-20 days'), 75000.00, 75000.00, 40000.00, 'OMNICHANNEL', 'Dispatched initial reminder sequence; customer made two partial payments of ₹20,000 each', '["Milestone payment schedule agreed"]', date('now', '-20 days'));

@@ -33,7 +33,9 @@ REQUIRED_TABLES = [
     "subscription_items",
     "invoices",
     "invoice_items",
-    "payments"
+    "payments",
+    "action_records",
+    "recovery_execution_logs"
 ]
 
 def print_header(title):
@@ -155,6 +157,8 @@ def run_validation(db_path=":memory:"):
     assert counts["invoices"] >= 12, f"Expected >= 12 invoices, got {counts['invoices']}"
     assert counts["payments"] >= 8, f"Expected >= 8 payments, got {counts['payments']}"
     assert counts["quotations"] >= 2, f"Expected multiple quotations, got {counts['quotations']}"
+    assert counts["action_records"] >= 5, f"Expected >= 5 action_records, got {counts['action_records']}"
+    assert counts["recovery_execution_logs"] >= 2, f"Expected >= 2 recovery_execution_logs, got {counts['recovery_execution_logs']}"
     print(" -> Record count criteria fully met.")
 
     # ------------------------------------------------------------------------
