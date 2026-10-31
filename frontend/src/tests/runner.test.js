@@ -4,6 +4,7 @@ import { formatCurrency, formatDate, formatPercent, getInitials, formatBillingCy
 import { getPasswordStrength, passwordSchema, loginSchema } from '../utils/validators.js';
 import { hasPermission, PERMISSIONS } from '../utils/permissions.js';
 import { MOCK_USERS, MOCK_PRODUCTS, MOCK_PLANS, MOCK_INVOICES, MOCK_PAYMENTS, MOCK_CUSTOMERS } from '../data/mockData.js';
+import { intelligenceService } from '../services/intelligenceService.js';
 
 describe('REVORA Formatters', () => {
   it('formats INR currency correctly', () => {
@@ -151,5 +152,48 @@ describe('REVORA Mock Data Integrity', () => {
     MOCK_PAYMENTS.forEach(p => {
       assert.ok(invoiceIds.has(p.invoiceId), `Payment ${p.id} references valid invoice`);
     });
+  });
+});
+
+describe('Autonomous Revenue Recovery & Churn Defense Agent', () => {
+  it('returns valid recovery analytics KPI ribbon metrics', async () => {
+    const res = await intelligenceService.getRecoveryMetrics();
+    assert.ok(res.data, 'Metrics data returned');
+    assert.strictEqual(typeof res.data.totalRevenueRecovered, 'number');
+    assert.strictEqual(typeof res.data.arrProtected, 'number');
+    assert.strictEqual(typeof res.data.successRate, 'number');
+    assert.strictEqual(typeof res.data.activeActions, 'number');
+    assert.ok(res.data.totalRevenueRecovered > 0, 'Recovered revenue positive');
+    assert.ok(res.data.arrProtected > 0, 'ARR protected positive');
+  });
+
+  it('generates high-fidelity AI mitigation plan with signals and confidence', async () => {
+    const res = await intelligenceService.getMitigationPlan('ra1');
+    assert.ok(res.data, 'Mitigation plan generated');
+    assert.ok(res.data.plan_type, 'Plan type present');
+    assert.ok(res.data.risk_score >= 0 && res.data.risk_score <= 100);
+    assert.ok(Array.isArray(res.data.signals));
+    assert.ok(res.data.signals.length >= 2, 'At least 2 risk signals detected');
+    assert.ok(res.data.confidence > 0.5, 'AI confidence high');
+    assert.ok(res.data.preview, 'Communication preview present');
+  });
+
+  it('executes human-confirmed mitigation and updates recovery metrics dynamically', async () => {
+    const planRes = await intelligenceService.getMitigationPlan('ra1');
+    const execRes = await intelligenceService.executeMitigation('ra1', planRes.data);
+    assert.ok(execRes.success, 'Execution succeeded');
+    assert.strictEqual(execRes.data.status, 'resolved', 'Action status updated to resolved');
+    assert.ok(execRes.recoveryMetrics.totalRevenueRecovered > 245000, 'Recovered revenue increased');
+  });
+
+  it('supports persistent triage state transitions (resolve, snooze, reopen)', async () => {
+    const snoozeRes = await intelligenceService.snoozeAction('ra2');
+    assert.strictEqual(snoozeRes.data.status, 'snoozed');
+
+    const reopenRes = await intelligenceService.reopenAction('ra2');
+    assert.strictEqual(reopenRes.data.status, 'open');
+
+    const resolveRes = await intelligenceService.resolveAction('ra2');
+    assert.strictEqual(resolveRes.data.status, 'resolved');
   });
 });

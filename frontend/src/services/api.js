@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
-const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_BASE_URL) || 'http://localhost:8000/api';
+const MOCK_MODE = (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_MOCK_MODE === 'true');
 
 const api = axios.create({
   baseURL: BASE_URL,
