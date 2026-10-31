@@ -69,7 +69,7 @@ export function Sidebar({ collapsed, onCollapse }) {
   return (
     <aside
       className={clsx(
-        'relative flex flex-col bg-[#0F172A] text-slate-300 border-r border-slate-800 transition-all duration-300 ease-in-out shrink-0 select-none z-40',
+        'relative flex flex-col bg-[#111827] text-slate-300 border-r border-slate-800 transition-all duration-300 ease-in-out shrink-0 select-none z-40',
         collapsed ? 'w-18' : 'w-64'
       )}
       style={{ minHeight: '100vh' }}

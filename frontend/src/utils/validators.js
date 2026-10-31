@@ -31,8 +31,11 @@ export const forgotPasswordSchema = z.object({
 
 export const productSchema = z.object({
   name: z.string().min(2, 'Product name is required'),
-  description: z.string().optional(),
+  type: z.string().default('Subscription'),
   category: z.string().min(1, 'Category is required'),
+  sales_price: z.coerce.number().min(0, 'Sales price must be positive').default(0),
+  cost_price: z.coerce.number().min(0, 'Cost price must be positive').default(0),
+  description: z.string().optional(),
   status: z.enum(['active', 'draft', 'archived']),
 });
 
