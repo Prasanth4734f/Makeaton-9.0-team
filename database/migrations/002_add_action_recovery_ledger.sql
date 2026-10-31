@@ -91,3 +91,4 @@ CREATE INDEX IF NOT EXISTS idx_recovery_logs_exec_id ON recovery_execution_logs(
 CREATE INDEX IF NOT EXISTS idx_recovery_logs_action ON recovery_execution_logs(action_id);
 CREATE INDEX IF NOT EXISTS idx_recovery_logs_status ON recovery_execution_logs(execution_status);
 CREATE INDEX IF NOT EXISTS idx_recovery_logs_date ON recovery_execution_logs(executed_at);
+

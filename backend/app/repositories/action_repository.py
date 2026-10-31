@@ -466,3 +466,4 @@ class ActionRepository:
             "mitigationPlanType": latest_log.plan_type if latest_log else None,
             "actualRecoveredAmount": latest_log.actual_recovered_amount if latest_log else 0.0
         }
+
