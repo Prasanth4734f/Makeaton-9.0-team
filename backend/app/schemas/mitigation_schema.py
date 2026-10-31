@@ -75,3 +75,4 @@ class RecoveryMetricsResponse(BaseModel):
     total_actions_evaluated: int
     resolved_actions_count: int
     snoozed_actions_count: int
+

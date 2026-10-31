@@ -639,3 +639,4 @@ class MitigationService:
     def get_recovery_metrics(cls, db: Session) -> Dict[str, Any]:
         """Calculates recovery metrics from persisted execution logs and DB state."""
         return MitigationPersistenceManager.get_recovery_metrics()
+
