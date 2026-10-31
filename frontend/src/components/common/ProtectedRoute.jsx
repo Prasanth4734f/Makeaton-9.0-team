@@ -12,9 +12,10 @@ export function ProtectedRoute({ children, allowedRoles = null }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  const userRole = (user.role || '').toLowerCase();
+  if (allowedRoles && !allowedRoles.map(r => r.toLowerCase()).includes(userRole)) {
     // Redirect customers to customer portal
-    if (user.role === 'customer') return <Navigate to="/customer-portal" replace />;
+    if (userRole === 'customer') return <Navigate to="/customer-portal" replace />;
     return <Navigate to="/dashboard" replace />;
   }
 

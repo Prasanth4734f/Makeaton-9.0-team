@@ -15,19 +15,28 @@ api.interceptors.request.use(config => {
     const stored = localStorage.getItem('revora_auth');
     if (stored) {
       const user = JSON.parse(stored);
-      if (user?.token) config.headers.Authorization = `Bearer ${user.token}`;
+      const token = user?.token || user?.access_token;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
   } catch { /* ignore */ }
   return config;
 });
 
-// Global error handling
+// Global error handling:
+// Prevent bad global redirect behavior:
+// Normal API/service errors (like Action Center or data fetches) must NOT blindly log out a valid user.
+// Only explicit session check endpoints (e.g. /auth/me) indicating a dead session should redirect.
 api.interceptors.response.use(
   response => response,
   error => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('revora_auth');
-      window.location.href = '/login';
+    const isExplicitAuthCheck = error.config?.url?.includes('/auth/me');
+    if (error.response?.status === 401 && isExplicitAuthCheck) {
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        localStorage.removeItem('revora_auth');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

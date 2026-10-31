@@ -15,6 +15,7 @@ export default function Profile() {
   const { user } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || 'Harshitha Reddy',
     phone: user?.phone || '+91-98765-43210',
@@ -36,8 +37,12 @@ export default function Profile() {
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    setIsEditing(false);
-    showBanner('success', 'Profile details updated locally (simulated).');
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setIsEditing(false);
+      showBanner('success', 'Profile details updated locally (simulated).');
+    }, 400);
   };
 
   const handlePasswordSubmit = (e) => {
@@ -122,16 +127,33 @@ export default function Profile() {
           </div>
 
           {!isEditing ? (
-            <Button variant="secondary" icon={Edit2} size="sm" onClick={() => setIsEditing(true)}>
-              Edit Profile
+            <Button
+              variant="primary"
+              icon={Edit2}
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
+              Update Profile
             </Button>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="secondary" icon={X} size="sm" onClick={() => setIsEditing(false)}>
+              <Button
+                variant="secondary"
+                icon={X}
+                size="sm"
+                onClick={() => setIsEditing(false)}
+                disabled={isSaving}
+              >
                 Cancel
               </Button>
-              <Button variant="primary" icon={Save} size="sm" onClick={handleSaveProfile}>
-                Save Changes
+              <Button
+                variant="primary"
+                icon={Save}
+                size="sm"
+                onClick={handleSaveProfile}
+                loading={isSaving}
+              >
+                {isSaving ? 'Updating Profile...' : 'Update Profile'}
               </Button>
             </div>
           )}
@@ -207,6 +229,29 @@ export default function Profile() {
               </div>
             )}
           </div>
+
+          {isEditing && (
+            <div className="sm:col-span-2 flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+              <Button
+                variant="secondary"
+                icon={X}
+                size="sm"
+                onClick={() => setIsEditing(false)}
+                disabled={isSaving}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                icon={Save}
+                size="sm"
+                loading={isSaving}
+              >
+                {isSaving ? 'Updating Profile...' : 'Update Profile'}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
 
@@ -269,8 +314,8 @@ export default function Profile() {
             <Button variant="secondary" onClick={() => setIsPasswordModalOpen(false)} disabled={pwLoading}>
               Cancel
             </Button>
-            <Button onClick={handlePasswordSubmit} loading={pwLoading}>
-              Update Password
+            <Button variant="primary" onClick={handlePasswordSubmit} loading={pwLoading}>
+              {pwLoading ? 'Updating Password...' : 'Update Password'}
             </Button>
           </>
         }

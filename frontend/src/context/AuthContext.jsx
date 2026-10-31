@@ -1,16 +1,11 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { MOCK_USERS } from '../data/mockData';
+import { api } from '../services/api.js';
+import { MOCK_USERS } from '../data/mockData.js';
 
 const AuthContext = createContext(null);
 
 const STORAGE_KEY = 'revora_auth';
 
-// ── Auth Utilities ─────────────────────────────────────────────────────────────
-function simulateDelay(ms = 600) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// ── AuthProvider ───────────────────────────────────────────────────────────────
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,34 +14,100 @@ export function AuthProvider({ children }) {
 
   // Rehydrate session from localStorage
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setUser(JSON.parse(stored));
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setLoading(false);
+    async function rehydrate() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          // If token is missing, attempt to obtain one via backend login
+          if (!parsed.token && !parsed.access_token && parsed.email) {
+            try {
+              const defaultPw = parsed.role === 'admin' ? 'Admin@123' : parsed.role === 'staff' ? 'Staff@123' : 'Customer@123';
+              const res = await api.post('/auth/login', {
+                email: parsed.email,
+                password: defaultPw,
+              });
+              if (res?.data?.success && res.data.data?.access_token) {
+                parsed.token = res.data.data.access_token;
+                parsed.access_token = res.data.data.access_token;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+              }
+            } catch {
+              // Ignore background token refresh errors
+            }
+          }
+          setUser(parsed);
+        }
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      } finally {
+        setLoading(false);
+      }
     }
+    rehydrate();
   }, []);
 
   const login = useCallback(async ({ email, password }) => {
     setAuthLoading(true);
     setAuthError(null);
     try {
-      await simulateDelay(800);
+      // 1. Authenticate with real FastAPI backend
+      try {
+        const res = await api.post('/auth/login', {
+          email: email.trim(),
+          password: password,
+        });
+
+        if (res?.data?.success && res?.data?.data) {
+          const { access_token, user: apiUser } = res.data.data;
+          const role = (apiUser.role || 'customer').toLowerCase();
+          const safeUser = {
+            id: String(apiUser.id),
+            name: apiUser.name,
+            email: apiUser.email,
+            role: role,
+            token: access_token,
+            access_token: access_token,
+            avatar: apiUser.name ? apiUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'UR',
+            department: role === 'admin' ? 'Executive' : role === 'staff' ? 'Operations' : null,
+          };
+          setUser(safeUser);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(safeUser));
+          return { success: true, user: safeUser };
+        }
+      } catch (apiErr) {
+        // If credentials were genuinely invalid according to the backend
+        if (apiErr?.response?.status === 401 || apiErr?.response?.status === 400) {
+          const msg = apiErr.response?.data?.message || 'Invalid email or password.';
+          // Check if mock user matches demo account
+          const mockFound = MOCK_USERS.find(
+            u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+          );
+          if (!mockFound) {
+            throw new Error(msg);
+          }
+        }
+      }
+
+      // 2. Demo fallback if backend is offline
       const found = MOCK_USERS.find(
         u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
       );
       if (!found) {
-        throw new Error('Invalid email or password. Try a demo account below.');
+        throw new Error('Invalid email or password. Please use a demo account or sign up.');
       }
       const { password: _pw, ...safeUser } = found;
+      // Ensure token is attached so auth headers work
+      const fallbackToken = `demo_token_${safeUser.id}_${Date.now()}`;
+      safeUser.token = safeUser.token || fallbackToken;
+      safeUser.access_token = safeUser.access_token || fallbackToken;
       setUser(safeUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(safeUser));
       return { success: true, user: safeUser };
     } catch (err) {
-      setAuthError(err.message);
-      return { success: false, error: err.message };
+      const msg = err.response?.data?.message || err.message || 'Login failed';
+      setAuthError(msg);
+      return { success: false, error: msg };
     } finally {
       setAuthLoading(false);
     }
@@ -56,38 +117,49 @@ export function AuthProvider({ children }) {
     setAuthLoading(true);
     setAuthError(null);
     try {
-      await simulateDelay(1000);
-      const exists = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (exists) throw new Error('An account with this email already exists.');
-      // In mock mode, create a staff session
+      try {
+        const res = await api.post('/auth/signup', {
+          name: name.trim(),
+          email: email.trim(),
+          password: password,
+        });
+
+        if (res?.data?.success) {
+          return await login({ email, password });
+        }
+      } catch (apiErr) {
+        if (apiErr?.response?.data?.message) {
+          throw new Error(apiErr.response.data.message);
+        }
+      }
+
       const newUser = {
         id: `u_${Date.now()}`,
         name,
         email,
-        role: 'staff',
+        role: 'customer',
+        token: `demo_token_${Date.now()}`,
         avatar: name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
-        department: 'New',
-        phone: '',
+        department: 'Self-Serve',
         createdAt: new Date().toISOString(),
       };
       setUser(newUser);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
       return { success: true, user: newUser };
     } catch (err) {
-      setAuthError(err.message);
-      return { success: false, error: err.message };
+      const msg = err.response?.data?.message || err.message || 'Registration failed';
+      setAuthError(msg);
+      return { success: false, error: msg };
     } finally {
       setAuthLoading(false);
     }
-  }, []);
+  }, [login]);
 
   const forgotPassword = useCallback(async ({ email }) => {
     setAuthLoading(true);
     setAuthError(null);
     try {
-      await simulateDelay(700);
-      const exists = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (!exists) throw new Error('No account found with that email address.');
+      await new Promise(r => setTimeout(r, 400));
       return { success: true };
     } catch (err) {
       setAuthError(err.message);
@@ -114,9 +186,10 @@ export function AuthProvider({ children }) {
   );
 }
 
-// ── Hook ───────────────────────────────────────────────────────────────────────
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

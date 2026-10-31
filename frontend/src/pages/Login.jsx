@@ -267,9 +267,9 @@ export default function Login() {
               loading={authLoading}
               icon={ArrowRight}
               iconRight
-              className="w-full mt-2"
+              className="w-full mt-2 btn-primary"
             >
-              Sign In to Platform
+              {authLoading ? 'Signing In to Platform...' : 'Sign In to Platform'}
             </Button>
           </form>
 

@@ -585,10 +585,12 @@ export default function ActionCenter() {
                     {action.status !== 'resolved' && (
                       <button
                         onClick={() => handleOpenMitigate(action)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm shadow-indigo-500/25 hover:from-indigo-500 hover:to-purple-500 transition-all cursor-pointer"
+                        data-variant="primary"
+                        style={{ color: '#ffffff', opacity: 1, visibility: 'visible', WebkitTextFillColor: '#ffffff' }}
+                        className="btn-primary inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm shadow-indigo-500/25 hover:from-indigo-500 hover:to-purple-500 transition-all cursor-pointer"
                       >
-                        <Zap className="h-3.5 w-3.5 fill-current" />
-                        <span>⚡ Mitigate Risk</span>
+                        <Zap className="h-3.5 w-3.5 fill-current text-white" style={{ color: '#ffffff' }} />
+                        <span style={{ color: '#ffffff', opacity: 1, visibility: 'visible', WebkitTextFillColor: '#ffffff' }}>⚡ Mitigate Risk</span>
                       </button>
                     )}
 

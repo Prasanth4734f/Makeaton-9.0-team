@@ -52,3 +52,125 @@
     transform: translateY(0);
   }
 }
+
+
+/* ==========================================================================
+   GUARANTEED BUTTON TEXT VISIBILITY & CONTRAST
+   Explicit foreground definitions preventing invisible, transparent, or
+   inherited button text across all states (normal, hover, active, disabled).
+   ========================================================================== */
+
+button,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  visibility: visible !important;
+}
+
+button > span,
+[type="button"] > span,
+[type="submit"] > span {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.btn-primary,
+button.btn-primary,
+button[data-variant="primary"],
+[data-variant="primary"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-primary span,
+button.btn-primary span,
+button[data-variant="primary"] span,
+.btn-primary svg,
+button.btn-primary svg,
+button[data-variant="primary"] svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-secondary,
+button.btn-secondary,
+button[data-variant="secondary"] {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  opacity: 1 !important;
+}
+
+.btn-secondary span,
+button.btn-secondary span,
+button[data-variant="secondary"] span {
+  color: #334155 !important;
+  -webkit-text-fill-color: #334155 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-danger,
+button.btn-danger,
+button[data-variant="danger"],
+.btn-danger span,
+button.btn-danger span,
+button[data-variant="danger"] span,
+.btn-danger svg,
+button.btn-danger svg,
+button[data-variant="danger"] svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-success,
+button.btn-success,
+button[data-variant="success"],
+.btn-success span,
+button.btn-success span,
+button[data-variant="success"] span,
+.btn-success svg,
+button.btn-success svg,
+button[data-variant="success"] svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-warning,
+button.btn-warning,
+button[data-variant="warning"],
+.btn-warning span,
+button.btn-warning span,
+button[data-variant="warning"] span,
+.btn-warning svg,
+button.btn-warning svg,
+button[data-variant="warning"] svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-outline,
+button.btn-outline,
+button[data-variant="outline"] {
+  color: #4f46e5 !important;
+  -webkit-text-fill-color: #4f46e5 !important;
+  visibility: visible !important;
+}
+
+.btn-outline span,
+button.btn-outline span,
+button[data-variant="outline"] span {
+  color: #4f46e5 !important;
+  -webkit-text-fill-color: #4f46e5 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
