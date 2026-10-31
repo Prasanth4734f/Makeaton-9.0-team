@@ -6,11 +6,20 @@ from app.database.models import Invoice, InvoiceStatus, Subscription, Subscripti
 class IntelligenceAdapter:
     """
     Adapter interface to consume output from Prasanth's Revenue Intelligence Engine.
-    If external service/module is not yet plugged in, provides standard deterministic
-    heuristics based on actual invoice and subscription state.
+    Leverages MitigationService and analyze_revenue when available, falling back
+    gracefully to deterministic SQL heuristics if necessary.
     """
     @staticmethod
     def get_actionable_insights(db: Session) -> List[Dict[str, Any]]:
+        try:
+            from app.services.mitigation_service import MitigationService
+            actions = MitigationService.get_all_actions(db)
+            if actions:
+                return actions
+        except Exception:
+            pass
+
+        # Fallback to direct DB query heuristics
         actions = []
         now = datetime.utcnow()
 
@@ -57,4 +66,3 @@ class IntelligenceAdapter:
             action_idx += 1
 
         return actions
-
