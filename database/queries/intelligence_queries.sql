@@ -186,3 +186,4 @@ WHERE s.status = 'ACTIVE'
         AND inv.status != 'CANCELLED'
   )
 ORDER BY s.recurring_amount DESC;
+

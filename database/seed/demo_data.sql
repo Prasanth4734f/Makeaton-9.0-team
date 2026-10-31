@@ -243,3 +243,4 @@ INSERT INTO payments (id, payment_reference, invoice_id, customer_id, payment_da
 (8, 'PAY-2026-008', 9, 6, date('now', '-160 days'), 'BANK_TRANSFER', 120000.00, 'INR', 'COMPLETED', 'TXN_QUANTUM_RTGS_55', 'RTGS transfer from Quantum Leap AI', date('now', '-160 days'), date('now', '-160 days')),
 (9, 'PAY-2026-009', 10, 8, date('now', '-40 days'), 'BANK_TRANSFER', 20000.00, 'INR', 'COMPLETED', 'TXN_FINEDG_PART1', 'First installment for Q1 subscription', date('now', '-40 days'), date('now', '-40 days')),
 (10, 'PAY-2026-010', 10, 8, date('now', '-20 days'), 'BANK_TRANSFER', 20000.00, 'INR', 'COMPLETED', 'TXN_FINEDG_PART2', 'Second installment for Q1 subscription', date('now', '-20 days'), date('now', '-20 days'));
+

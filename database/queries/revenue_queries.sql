@@ -143,3 +143,4 @@ FROM payments
 WHERE status = 'COMPLETED'
 GROUP BY payment_method
 ORDER BY total_collected_amount DESC;
+

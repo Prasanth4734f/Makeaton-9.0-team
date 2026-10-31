@@ -95,3 +95,4 @@ with open("database/seed/demo_data.sql") as f:
 conn.close()
 print("REVORA database seeded successfully!")
 ```
+

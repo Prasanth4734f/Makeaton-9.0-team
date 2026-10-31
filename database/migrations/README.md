@@ -9,3 +9,4 @@ This directory stores ordered database migration scripts for REVORA schema versi
 
 ## Current Migrations
 - `001_initial_schema.sql`: Baseline table definitions and relationship constraints for all 13 core tables.
+

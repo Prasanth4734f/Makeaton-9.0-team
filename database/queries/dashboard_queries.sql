@@ -125,3 +125,4 @@ SELECT
     (SELECT COALESCE(SUM(outstanding_amount), 0.00) FROM invoices WHERE status IN ('ISSUED', 'PARTIALLY_PAID', 'OVERDUE')) AS total_outstanding_amount,
     (SELECT COALESCE(SUM(outstanding_amount), 0.00) FROM invoices WHERE status = 'OVERDUE' OR (due_date < CURRENT_DATE AND status IN ('ISSUED', 'PARTIALLY_PAID'))) AS total_overdue_amount,
     (SELECT COUNT(*) FROM invoices WHERE status = 'OVERDUE' OR (due_date < CURRENT_DATE AND status IN ('ISSUED', 'PARTIALLY_PAID'))) AS overdue_invoices_count;
+

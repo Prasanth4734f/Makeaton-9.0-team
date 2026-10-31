@@ -177,3 +177,4 @@ conn.close()
 | `FOREIGN KEY constraint failed` | Child record inserted before parent record, or foreign keys disabled | Verify insertion order; ensure `PRAGMA foreign_keys = ON;` is executed upon connection. |
 | `CHECK constraint failed: outstanding_amount >= 0.00` | Attempting to record a payment exceeding invoice balance | Validate `payment.amount <= invoice.outstanding_amount` prior to payment insertion. |
 | Date scenario not matching | System clock drifted or static date used | Ensure you run queries against dynamic date functions (`CURRENT_DATE` and `JULIANDAY`). |
+

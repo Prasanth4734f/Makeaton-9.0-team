@@ -9,3 +9,4 @@
 -- Execute schema definition
 -- Note: In production CI/CD or Python runner, this applies database/schema/schema.sql
 -- and database/schema/constraints.sql
+

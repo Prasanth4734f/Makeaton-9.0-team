@@ -265,3 +265,4 @@ Cash collection transactions recorded against invoices.
 | `notes` | TEXT | Remittance details / memo | NULLABLE | `'Annual Enterprise wire payment'` |
 | `created_at` | TIMESTAMP | Record creation timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2025-11-30 11:22:33'` |
 | `updated_at` | TIMESTAMP | Last update timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2025-11-30 11:22:33'` |
+
