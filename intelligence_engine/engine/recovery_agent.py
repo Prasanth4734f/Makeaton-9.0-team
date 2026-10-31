@@ -210,3 +210,4 @@ class AutonomousRecoveryAgent:
 
         reports.sort(key=sort_key)
         return reports
+

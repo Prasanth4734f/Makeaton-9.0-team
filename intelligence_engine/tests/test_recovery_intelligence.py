@@ -377,3 +377,4 @@ def test_scenario_6_backward_compatibility():
     billing = process_subscription_billing(payload["subscriptions"][0], reference_date=REF_DATE)
     assert "billing_allowed" in billing
     assert billing["billing_allowed"] is True
+
