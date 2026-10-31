@@ -25,29 +25,33 @@ const PRIORITY_BADGE_CONFIG = {
   critical: {
     symbol: '🔴',
     label: 'Critical Risk',
-    badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+    badgeClass: 'bg-rose-100 text-rose-900 border-rose-300 font-bold',
     cardBorder: 'border-l-rose-600',
+    cardBg: 'bg-gradient-to-r from-rose-50/90 via-white to-white',
     impactColor: 'text-rose-700',
   },
   high: {
     symbol: '🟠',
     label: 'High Risk',
-    badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
+    badgeClass: 'bg-orange-100 text-orange-900 border-orange-300 font-bold',
     cardBorder: 'border-l-orange-500',
+    cardBg: 'bg-gradient-to-r from-orange-50/90 via-white to-white',
     impactColor: 'text-orange-700',
   },
   medium: {
     symbol: '🟡',
     label: 'Medium Attention',
-    badgeClass: 'bg-amber-50 text-amber-800 border-amber-200',
+    badgeClass: 'bg-amber-100 text-amber-900 border-amber-300 font-bold',
     cardBorder: 'border-l-amber-400',
+    cardBg: 'bg-gradient-to-r from-amber-50/90 via-white to-white',
     impactColor: 'text-amber-800',
   },
   low: {
     symbol: '🟢',
     label: 'Low Priority',
-    badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    badgeClass: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold',
     cardBorder: 'border-l-emerald-500',
+    cardBg: 'bg-gradient-to-r from-emerald-50/90 via-white to-white',
     impactColor: 'text-emerald-700',
   },
 };
@@ -168,55 +172,59 @@ export default function ActionCenter() {
 
       {/* Intelligence Priority Triage Bar */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-2xl border border-rose-200/90 bg-white p-4 shadow-2xs card-elevation">
+        <div className="relative overflow-hidden rounded-2xl border border-rose-300 bg-gradient-to-br from-rose-50/70 via-white to-white p-4 shadow-xs">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-red-600" />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-700 uppercase tracking-wide flex items-center gap-1.5">
+            <span className="text-xs font-bold text-rose-800 uppercase tracking-wide flex items-center gap-1.5">
               <span>🔴</span> Critical Risk
             </span>
-            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+            <span className="text-[10px] font-extrabold text-rose-900 bg-rose-200/90 px-2 py-0.5 rounded-full border border-rose-300">
               Immediate
             </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold text-slate-900 font-mono">{criticalCount}</div>
+          <div className="mt-2 text-2xl font-black text-slate-900 font-mono">{criticalCount}</div>
           <div className="text-[11px] text-slate-500 font-medium mt-0.5">High-impact invoice overdue</div>
         </div>
 
-        <div className="rounded-2xl border border-orange-200/90 bg-white p-4 shadow-2xs card-elevation">
+        <div className="relative overflow-hidden rounded-2xl border border-orange-300 bg-gradient-to-br from-orange-50/70 via-white to-white p-4 shadow-xs">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-amber-500" />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-orange-700 uppercase tracking-wide flex items-center gap-1.5">
+            <span className="text-xs font-bold text-orange-800 uppercase tracking-wide flex items-center gap-1.5">
               <span>🟠</span> High Risk
             </span>
-            <span className="text-[10px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+            <span className="text-[10px] font-extrabold text-orange-900 bg-orange-200/90 px-2 py-0.5 rounded-full border border-orange-300">
               Churn Alerts
             </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold text-slate-900 font-mono">{highCount}</div>
+          <div className="mt-2 text-2xl font-black text-slate-900 font-mono">{highCount}</div>
           <div className="text-[11px] text-slate-500 font-medium mt-0.5">Payment failures / churn probability</div>
         </div>
 
-        <div className="rounded-2xl border border-amber-200/90 bg-white p-4 shadow-2xs card-elevation">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-300 bg-gradient-to-br from-amber-50/70 via-white to-white p-4 shadow-xs">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-yellow-500" />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1.5">
+            <span className="text-xs font-bold text-amber-800 uppercase tracking-wide flex items-center gap-1.5">
               <span>🟡</span> Medium Attention
             </span>
-            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+            <span className="text-[10px] font-extrabold text-amber-900 bg-amber-200/90 px-2 py-0.5 rounded-full border border-amber-300">
               Renewals
             </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold text-slate-900 font-mono">{mediumCount}</div>
+          <div className="mt-2 text-2xl font-black text-slate-900 font-mono">{mediumCount}</div>
           <div className="text-[11px] text-slate-500 font-medium mt-0.5">Renewals & expansion upsell</div>
         </div>
 
-        <div className="rounded-2xl border border-emerald-200/90 bg-white p-4 shadow-2xs card-elevation">
+        <div className="relative overflow-hidden rounded-2xl border border-emerald-300 bg-gradient-to-br from-emerald-50/70 via-white to-white p-4 shadow-xs">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide flex items-center gap-1.5">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center gap-1.5">
               <span>🟢</span> Protected Yield
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-[10px] font-extrabold text-emerald-900 bg-emerald-200/90 px-2 py-0.5 rounded-full border border-emerald-300">
               Mitigated
             </span>
           </div>
-          <div className="mt-2 text-2xl font-extrabold text-slate-900 font-mono">{resolvedCount}</div>
+          <div className="mt-2 text-2xl font-black text-slate-900 font-mono">{resolvedCount}</div>
           <div className="text-[11px] text-slate-500 font-medium mt-0.5">Actions executed successfully</div>
         </div>
       </div>
@@ -283,8 +291,9 @@ export default function ActionCenter() {
               <div
                 key={action.id}
                 className={clsx(
-                  'rounded-2xl border border-slate-200/90 bg-white p-5 shadow-2xs transition-all hover:shadow-md border-l-4 card-elevation',
-                  pConfig.cardBorder
+                  'rounded-2xl border border-slate-200/90 p-5 shadow-xs transition-all hover:shadow-md border-l-4 card-elevation',
+                  pConfig.cardBorder,
+                  pConfig.cardBg
                 )}
               >
                 {/* Header row: Priority Badge + Title + Revenue Impact */}
