@@ -266,3 +266,59 @@ Cash collection transactions recorded against invoices.
 | `created_at` | TIMESTAMP | Record creation timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2025-11-30 11:22:33'` |
 | `updated_at` | TIMESTAMP | Last update timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2025-11-30 11:22:33'` |
 
+
+
+---
+
+## 14. Table: `action_records`
+Persistent intelligence action center items and churn defense alerts.
+
+| Column Name | Data Type | Purpose | Constraints | Example Value |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | INTEGER | Surrogate primary identifier | PRIMARY KEY AUTOINCREMENT | `1` |
+| `action_id` | VARCHAR(100) | Unique human/business action code | NOT NULL, UNIQUE, INDEXED | `'ACT-001'` |
+| `action_type` | VARCHAR(50) | Risk category classification | NOT NULL, DEFAULT 'PAYMENT_RISK' | `'PAYMENT_RISK'` |
+| `title` | VARCHAR(255) | Brief summary title of risk event | NOT NULL | `'Overdue Invoice: INV-1042'` |
+| `description` | TEXT | Detailed reasoning / context | NULLABLE | `'12 days past due date'` |
+| `priority` | VARCHAR(20) | Triage urgency level | CHECK IN ('CRITICAL', 'HIGH', 'MEDIUM', 'LOW') | `'CRITICAL'` |
+| `risk_score` | INTEGER | Algorithmic risk score (0-100) | CHECK (risk_score >= 0 AND <= 100) | `92` |
+| `status` | VARCHAR(20) | Operational lifecycle state | CHECK IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'SNOOZED') | `'OPEN'` |
+| `customer_id` | INTEGER | Subscribing account user | NULLABLE, FK -> users(id) | `2` |
+| `customer_name` | VARCHAR(255) | Denormalized company name | NULLABLE | `'BrightTech Enterprise'` |
+| `invoice_id` | INTEGER | Associated overdue invoice | NULLABLE, FK -> invoices(id) | `3` |
+| `subscription_id`| INTEGER | Associated recurring subscription| NULLABLE, FK -> subscriptions(id) | `2` |
+| `related_entity_type` | VARCHAR(50)| Type of entity involved | NULLABLE | `'invoice'` |
+| `related_entity_id` | VARCHAR(100)| Natural key of related entity | NULLABLE | `'INV-1042'` |
+| `recommended_action` | TEXT | Suggested mitigation playbook | NULLABLE | `'Execute Smart Dunning Sequence'`|
+| `potential_revenue_impact` | DECIMAL(12,2) | Total monetary exposure at risk | NOT NULL, DEFAULT 0.00, CHECK >= 0.00 | `48000.00` |
+| `created_at` | TIMESTAMP | Record creation timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2026-10-31 09:00:00'` |
+| `updated_at` | TIMESTAMP | Last update timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2026-10-31 09:00:00'` |
+| `resolved_at` | TIMESTAMP | Timestamp of resolution | NULLABLE | `NULL` |
+| `resolved_by` | INTEGER | User who resolved or executed | NULLABLE, FK -> users(id) | `1` |
+| `resolution_notes` | TEXT | Resolution audit commentary | NULLABLE | `'Customer paid via bank wire'` |
+| `snoozed_until` | TIMESTAMP | Active snooze expiration deadline | NULLABLE, INDEXED | `'2026-11-03 00:00:00'` |
+| `snoozed_at` | TIMESTAMP | Timestamp when snooze initiated | NULLABLE | `'2026-10-31 10:15:00'` |
+| `snoozed_by` | INTEGER | User who snoozed the action | NULLABLE, FK -> users(id) | `1` |
+| `snooze_reason` | TEXT | Justification for snooze window | NULLABLE | `'Waiting on client board review'` |
+
+---
+
+## 15. Table: `recovery_execution_logs`
+Persistent audit log of executed mitigation playbooks and financial recovery outcomes.
+
+| Column Name | Data Type | Purpose | Constraints | Example Value |
+| :--- | :--- | :--- | :--- | :--- |
+| `id` | INTEGER | Surrogate primary identifier | PRIMARY KEY AUTOINCREMENT | `1` |
+| `execution_id` | VARCHAR(100) | Unique execution audit reference | NOT NULL, UNIQUE, INDEXED | `'EXEC-2026-001'` |
+| `action_id` | INTEGER | Parent risk action record | NOT NULL, FK -> action_records(id) | `1` |
+| `plan_type` | VARCHAR(100) | Mitigation playbook executed | NOT NULL | `'DUNNING_NOTICE'` |
+| `execution_status`| VARCHAR(20) | Execution dispatch status | CHECK IN ('SUCCESS', 'PENDING', 'FAILED') | `'SUCCESS'` |
+| `executed_by` | INTEGER | User or system agent executor | NULLABLE, FK -> users(id) | `1` |
+| `executed_at` | TIMESTAMP | Execution timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2026-10-31 10:30:00'` |
+| `financial_amount` | DECIMAL(12,2) | Base financial exposure involved | NOT NULL, DEFAULT 0.00, CHECK >= 0.00 | `48000.00` |
+| `projected_recovery` | DECIMAL(12,2) | Modeled expected recovery amount | NOT NULL, DEFAULT 0.00, CHECK >= 0.00 | `45600.00` |
+| `actual_recovered_amount` | DECIMAL(12,2) | Actual settled cash recovered | NOT NULL, DEFAULT 0.00, CHECK >= 0.00 | `48000.00` |
+| `channel` | VARCHAR(100) | Communication rail used | NULLABLE, DEFAULT 'OMNICHANNEL' | `'OMNICHANNEL'` |
+| `notes` | TEXT | Execution notes / dispatch detail | NULLABLE | `'Dispatched via Email & WhatsApp'` |
+| `signals` | TEXT | JSON string of detected signals | NULLABLE | `'[\"Overdue > 12 days\"]'` |
+| `created_at` | TIMESTAMP | Record creation timestamp | NOT NULL, DEFAULT CURRENT_TIMESTAMP | `'2026-10-31 10:30:00'` |

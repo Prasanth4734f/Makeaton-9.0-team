@@ -206,3 +206,47 @@ stateDiagram-v2
     ACTIVE --> CLOSED : End of Term / Non-Renewal
 ```
 
+
+---
+
+## 5. Autonomous Revenue Recovery & Churn Defense Ledger
+
+### 5.1 Tables
+#### ction_records
+- **Purpose**: Persistent Action Record for Action Center intelligence alerts, risk detections, and mitigation recommendations.
+- **Primary Key**: id (INTEGER, AUTOINCREMENT)
+- **Natural Key**: ction_id (VARCHAR(100), UNIQUE, e.g. ACT-001)
+- **Foreign Keys**:
+  - customer_id -> users(id) ON DELETE SET NULL
+  - invoice_id -> invoices(id) ON DELETE SET NULL
+  - subscription_id -> subscriptions(id) ON DELETE SET NULL
+  - 
+esolved_by -> users(id) ON DELETE SET NULL
+  - snoozed_by -> users(id) ON DELETE SET NULL
+- **Statuses**: OPEN, IN_PROGRESS, RESOLVED, SNOOZED.
+- **Financial Metric**: potential_revenue_impact (Base monetary exposure at risk).
+
+#### 
+ecovery_execution_logs
+- **Purpose**: Persistent Recovery Log recording every mitigation plan executed against a risk action item.
+- **Primary Key**: id (INTEGER, AUTOINCREMENT)
+- **Natural Key**: execution_id (VARCHAR(100), UNIQUE, e.g. EXEC-2026-001)
+- **Foreign Keys**:
+  - ction_id -> ction_records(id) ON DELETE CASCADE
+  - executed_by -> users(id) ON DELETE SET NULL
+- **Execution Statuses**: SUCCESS, PENDING, FAILED.
+- **Financial Outcome Tracking**:
+  - inancial_amount: Base potential revenue impact involved
+  - projected_recovery: Modeled expected recovery
+  - ctual_recovered_amount: Settled cash recovered from client
+
+### 5.2 Action State Machine
+`mermaid
+stateDiagram-v2
+    [*] --> OPEN : AI Risk Alert Detected
+    OPEN --> IN_PROGRESS : Mitigation Preview / Staged
+    OPEN --> SNOOZED : Operator Snooze
+    SNOOZED --> OPEN : Snooze Window Elapsed / Reopened
+    OPEN --> RESOLVED : Direct Resolution / Dismissal
+    IN_PROGRESS --> RESOLVED : Mitigation Executed / Cash Collected
+`
